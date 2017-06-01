@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class=""><!--<![endif]-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<link href="main.css" rel="stylesheet" type="text/css"/>
+<link href="addPicModule.css" rel="stylesheet" type="text/css"/>
+<script src="imPo.js"></script>
+<script src="addPic.js"></script>
+<script>
+var xx=0;
+var yy=0;
+var j=0;
+var dirr=0;
+var filtypp=0;
+var txtFillType='threshold';
+var c2,ctx2,c3,ctx3,cToAdd,ctxToAdd;
+var mouseDownOverC2=0;
+var Xinit=0;
+var Yinit=0;
+
+function pausecomp(millis)
+{
+var date=new Date();
+var currDare=null;
+do {currDate=new Date();}
+while(currDate-date<millis);
+}
+
+window.onload=function(){
+
+var e = document.getElementById('div1');
+e.style.display = 'none';
+e = document.getElementById('addPicDiv');
+e.style.display = 'none';
+
+document.getElementById("ip2").value="threshold";
+
+document.getElementById("ip3").value="150";
+c2 = document.getElementById('myCanvas2');
+
+ctx2 = c2.getContext("2d");
+c3 = document.getElementById('myCanvas3');
+
+ctx3 = c3.getContext("2d");
+cToAdd = document.getElementById('myCanvasImgToAdd');
+
+ctxToAdd = cToAdd.getContext("2d");
+c3.addEventListener('touchstart',function(evt){doOverLayWork(c2,ctx2,c3,ctx3,'inpIMG','outpIMG','imgORIG',evt);},false);
+c3.addEventListener('mousedown',function(evt){mouseDownOverC2=1;
+Xinit=getMousePosAbs(c2,evt).x;
+Yinit=getMousePosAbs(c2,evt).y;
+},false);
+c3.addEventListener('mouseup',function(evt){mouseDownOverC2=0;
+makeBoxBWCoordinates(c3,ctx3,Xinit,Yinit,getMousePosAbs(c2,evt).x,getMousePosAbs(c2,evt).y,'inpIMG','outpIMG','imgORIG');
+},false);
+c3.addEventListener('mousemove',function(evt){
+if(mouseDownOverC2==1)
+{doOverLayWork(c2,ctx2,c3,ctx3,'inpIMG','outpIMG','imgORIG',evt);}
+},false);
+}
+
+
+function getFileName(fileControlId)
+{
+var retFName=document.getElementById(fileControlId).value;
+var lastSlashPos=retFName.lastIndexOf("\\");
+if(lastSlashPos==-1)
+{lastSlashPos=retFName.lastIndexOf("/");}
+if(lastSlashPos==-1){lastSlashPos=0;}
+var srcNew=retFName.substring(lastSlashPos+1);
+return srcNew;
+}
+
+function loadNewImage(fileControlId)
+{
+var fName=getFileName(fileControlId);
+document.getElementById("inpIMG").src=fName;
+document.getElementById("imgORIG").src=fName;
+}
+
+function loadNewImageForAdd(fileControlId)
+{
+var fName=getFileName(fileControlId);
+document.getElementById("samlpeImage").src=fName;
+document.getElementById("samlpeImageForDisp").src=fName;
+}
+
+function advancedPaintStat()
+{
+advancedPaint('div1','divMain','imgORIG','inpIMG','outpIMG',c2,ctx2,c3,ctx3,document.getElementById("ip2").value,document.getElementById("ip3").value,document.getElementById("ip4_1").value,document.getElementById("ip4_2").value);
+document.getElementById("ip1").value=document.getElementById("ip3").value;
+}
+
+function revertToLaunchMode()
+{
+
+if(document.getElementById('divMain').style.display=='none')
+{document.getElementById('divMain').style.display='block';}
+else
+{document.getElementById('divMain').style.display='none';}
+
+if(document.getElementById('div1').style.display=='none')
+{document.getElementById('div1').style.display='block';}
+else
+{document.getElementById('div1').style.display='none';}
+}
+
+function toggleAddImageModule()
+{
+if(document.getElementById('addPicDiv').style.display=='none')
+{document.getElementById('addPicDiv').style.display='block';
+document.getElementById('addPicture').value="Apply";
+document.getElementById('addPicture').style.backgroundColor="#4CAF50";
+}
+else
+{
+document.getElementById('addPicDiv').style.display='none';
+validateAndCorrectRGBData('rMin','rMax','gMin','gMax','bMin','bMax');
+addImage(c2,ctx2,'imgORIG','inpIMG',cToAdd,ctxToAdd,'samlpeImage');
+document.getElementById('addPicture').value="Add Picture";
+document.getElementById('addPicture').style.backgroundColor="#ff9800";
+}
+}
+
+function doOverlay()
+{
+doOverLayFromJSFile(c3,ctx3);
+advancedPaintStat();
+}
+</script>
+</head>
+<body>
+<div id="top">Image Processing Tools</div>
+
+<div id="div1">
+<canvas id="myCanvas3">Your browser does not support the HTML5 canvas tag.</canvas>
+<canvas id="myCanvas2">Your browser does not support the HTML5 canvas tag.</canvas>
+<img id="imgORIG" src="main_.png" alt="Image Not Found" hidden>
+<b id="Xcap">X:</b><input type='text' id='mouseX' disabled/><b id="Ycap" >Y:</b><input type='text' id='mouseY' disabled/><input type="button" id="backToNormmode" value="Back" onclick="revertToLaunchMode()"/><br>
+<canvas id="myCanvasImgToAdd" width="423" height="238" hidden>Your browser does not support the HTML5 canvas tag.</canvas>
+</div>
+
+<div id="divMain">
+
+<input type="file" id="fname" onchange="loadNewImage('fname')"/>
+<img id="inpIMG" src="main_.png" alt="Image Not Found">
+<img id="outpIMG" src="main_.png" alt="Image Not Found">
+<br>
+<input type="text" id="ip1" size="1" disabled></input>
+
+<select id="ip2" onchange="advancedPaintStat()">
+<option value="threshold">Threshold</option>
+<option value="threshold2">Threshold Range</option>
+<option value="-ve">-ve</option>
+<option value="edge">Edge</option>
+<option value="edgewithbckimg">Edge with back image</option>
+<option value="edgewithreal">Edge with actual image</option>
+<option value="xchange">Color Exchange</option>
+<option value="brightness">Brightness</option>
+<option value="same">Same</option>
+</select>
+
+<input type="range" class="rng rng0" id="ip3" value="50" min="0" max="255" onchange="advancedPaintStat()"/>
+<input type="range" class="rng rng1" orient="horizontal" onchange="advancedPaintStat()" id="ip4_1" value="50" min="0" max="255"/>
+<input type='text' id='holder' disabled/>
+<input type="range" class="rng rng2" orient="horizontal" onchange="advancedPaintStat()" id="ip4_2" value="50" min="0" max="255"/>
+<input id="commit" type="button" value="Commit" onclick="commitChanges(c2,ctx2,c3,ctx3,'inpIMG','imgORIG','outpIMG')"/>
+<div id="addPicDiv">
+<input type="file" id="fileAdd" onchange="loadNewImageForAdd('fileAdd')"/>
+<img id="samlpeImage" src="main_.png" alt="Image Not Found" hidden>
+<img id="samlpeImageForDisp" width="100" height="56" src="main_.png" alt="Image Not Found">
+<table id="colRange">
+<tr><td></td><td colspan="2">Color Range</td></tr>
+<tr><td></td><td>min</td><td>max</td></tr>
+<tr><td>Red</td><td><input type="text" id="rMin" style="width:30px"/></td><td><input type="text" id="rMax" style="width:30px"/></td></tr>
+<tr><td>Green</td><td><input type="text" id="gMin" style="width:30px"/></td><td><input type="text" id="gMax" style="width:30px"/></td></tr>
+<tr><td>Blue</td><td><input type="text" id="bMin" style="width:30px"/></td><td><input type="text" id="bMax" style="width:30px"/></td></tr>
+</table>
+</div>
+
+<input type="button" id="addPicture" value="Add Picture" onclick="toggleAddImageModule()()"/>
+<input type="button" value="Mouse Mode" id="mouseMode" onclick="revertToLaunchMode()"/>
+
+</div>
+<br>
+<div id="bottom">All rights reserved</div>
+</body>
+</html>

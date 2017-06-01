@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#scream
+{margin-left:25px;}
+#fname
+{margin-left:25px;}
+</style>
+
+<script src="imPo.js"></script>
+
+<script>
+var xx=0;
+var yy=0;
+var j=0;
+var dirr=0;
+var filtypp=0;
+var txtFillType='threshold';
+var c2,ctx2,c3,ctx3;
+var mouseDownOverC2=0;
+
+function pausecomp(millis)
+
+{
+var date=new Date();
+var currDare=null;
+do {currDate=new Date();}
+while(currDate-date<millis);
+}
+
+window.onload=function(){
+
+var e = document.getElementById('div1');
+e.style.display = 'none';
+
+document.getElementById("ip2").value="threshold";
+
+document.getElementById("ip3").value="150";
+c2 = document.getElementById('myCanvas2');
+
+ctx2 = c2.getContext("2d");
+c3 = document.getElementById('myCanvas3');
+
+ctx3 = c3.getContext("2d");
+c3.addEventListener('touchstart',function(evt){doOverLayWork(c2,ctx2,c3,ctx3,'scream','scream2',evt);},false);
+c3.addEventListener('mousedown',function(evt){mouseDownOverC2=1;},false);
+c3.addEventListener('mouseup',function(evt){mouseDownOverC2=0;},false);
+c3.addEventListener('mousemove',function(evt){
+if(mouseDownOverC2==1)
+{doOverLayWork(c2,ctx2,c3,ctx3,'scream','scream2',evt);}
+},false);
+}
+
+
+function getFileName()
+{
+var retFName=document.getElementById("fname").value;
+var lastSlashPos=retFName.lastIndexOf("\\");
+if(lastSlashPos==-1)
+{lastSlashPos=retFName.lastIndexOf("/");}
+if(lastSlashPos==-1){lastSlashPos=0;}
+var srcNew=retFName.substring(lastSlashPos+1);
+document.getElementById("scream").src=srcNew;
+}
+
+
+function advancedPaintStat()
+{
+advancedPaint('div1','divMain','scream','scream2',c2,ctx2,c3,ctx3,document.getElementById("ip2").value,document.getElementById("ip3").value,document.getElementById("ip4_1").value,document.getElementById("ip4_2").value);
+document.getElementById("ip1").value=document.getElementById("ip3").value;
+}
+
+function revertToLaunchMode()
+{
+
+if(document.getElementById('divMain').style.display=='none')
+{document.getElementById('divMain').style.display='block';}
+else
+{document.getElementById('divMain').style.display='none';}
+
+if(document.getElementById('div1').style.display=='none')
+{document.getElementById('div1').style.display='block';}
+else
+{document.getElementById('div1').style.display='none';}
+}
+
+function doOverlay()
+{
+doOverLayFromJSFile(c3,ctx3);
+advancedPaintStat();
+}
+</script>
+</head>
+<body>
+
+
+<div id="div1">
+X:<input type='text' id='mouseX' disabled/>Y:<input type='text' id='mouseY' disabled/><input type="button" value="Back" onclick="revertToLaunchMode()"/><br>
+<canvas id="myCanvas3" width="423" height="238" style="border:1px solid #d3d3d3;">Your browser does not support the HTML5 canvas tag.</canvas><br>
+<canvas id="myCanvas2" width="423" height="238" style="border:1px solid #d3d3d3;">Your browser does not support the HTML5 canvas tag.</canvas>
+</div>
+
+<div id="divMain">
+<input type="text" id="ip1" size="1" disabled></input>
+
+<select id="ip2" onchange="advancedPaintStat()">
+<option value="threshold">threshold</option>
+<option value="threshold2">Threshold Range</option>
+<option value="-ve">-ve</option>
+<option value="edge">edge</option>
+<option value="edgewithbckimg">edgewithbckimg</option>
+<option value="edgewithreal">edgewithreal</option>
+<option value="xchange">color xchange</option>
+<option value="brightness">Brightness</option>
+<option value="same">same</option>
+</select>
+
+<input type="button" value="Mouse Mode" onclick="revertToLaunchMode()"/><br>
+</br>
+<input type="range" orient="horizontal" onchange="advancedPaintStat()" id="ip4_1" value="50" min="0" max="255"/>
+<input type='text' id='holder' disabled/>
+</br>
+<input type="range" orient="horizontal" onchange="advancedPaintStat()" id="ip4_2" value="50" min="0" max="255"/>
+</br>
+
+<table>
+
+<tr>
+<td>
+<input type="file" id="fname" onchange="getFileName()"/>
+<br><img id="scream" width="423" height="238" src="main_.png" alt="Image Not Found"><br>
+<input type="range" orient="vertical" id="ip3" value="50" min="0" max="255" onchange="advancedPaintStat()"/>
+<img id="scream2" width="423" height="238" src="main_.png" alt="Image Not Found">
+</td>
+
+</tr>
+</table>
+</div>
+</body>
+</html>
